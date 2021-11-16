@@ -1,0 +1,38 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: authors-load-balance-circuit-braker
+  namespace: istio-course
+spec:
+  host: authors
+  trafficPolicy:
+    loadBalancer:
+      simple: RANDOM
+    connectionPool:
+      http:
+        http1MaxPendingRequests: 2
+        maxRequestsPerConnection: 2
+    outlierDetection:
+      consecutive5xxErrors: 3
+      interval: 1m
+      baseEjectionTime: 2m
+
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: books-load-balance-circuit-braker
+  namespace: istio-course
+spec:
+  host: books
+  trafficPolicy:
+    loadBalancer:
+      simple: ROUND_ROBIN
+    connectionPool:
+      http:
+        http1MaxPendingRequests: 2
+        maxRequestsPerConnection: 2
+    outlierDetection:
+      consecutive5xxErrors: 3
+      interval: 1m
+      baseEjectionTime: 2m

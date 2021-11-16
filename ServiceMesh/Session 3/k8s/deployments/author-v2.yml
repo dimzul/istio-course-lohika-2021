@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authors-v2
+  labels:
+    app: authors
+    version: v2
+    project: istio-course
+  namespace: istio-course
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authors
+      version: v2
+      project: istio-course
+  template:
+    metadata:
+      labels:
+        app: authors
+        version: v2
+        project: istio-course
+      annotations:
+        sidecar.istio.io/inject: "true"
+    spec:
+      serviceAccountName: servicemesh-authors
+      containers:
+        - name: authors
+          image: alexpletnev/authors-service:1.1
+          imagePullPolicy: IfNotPresent #Or use Always to download it from dockerhub
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: "/actuator/health"
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 60
+            timeoutSeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: "/actuator/health"
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 60
+            timeoutSeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          resources:
+            requests:
+              memory: "500M"
+              cpu: "0.15"
+            limits:
+              memory: "1500M"
+              cpu: "0.75"
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: authors
+  namespace: istio-course
+spec:
+  host: authors
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+  - name: v2
+    labels:
+      version: v2
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: authors
+  namespace: istio-course
+spec:
+  hosts:
+  - authors
+  http:
+  - route:
+    - destination:
+        host: authors
+        subset: v1
+      weight: 0
+    - destination:
+        host: authors
+        subset: v2
+      weight: 100
