@@ -8,7 +8,7 @@
 
 #### Security
 ##### mTLS for service-to-service communication
-To enable mTLS for service-to-service communication please create PeerAuthentication with ```spec.mtls.mode:STRICT``` in order to enable s2s communication only via mTLS (see ```/ServiceMesh/Session 4/k8s/gateway/security.yml:PeerAuthentication```). 
+To enable mTLS for service-to-service communication please create PeerAuthentication with ```spec.mtls.mode:STRICT``` in order to enable s2s communication only via mTLS (see ```/ServiceMesh/Session 5/k8s/gateway/security.yml:PeerAuthentication```). 
 
 For other modes please see: https://istio.io/latest/docs/concepts/security/#authentication
 <br/>
@@ -19,8 +19,8 @@ Screenshot from Kiali showing s2s communication is performed using mTLS (lock ic
 <img width="867" alt="kiali-mtls" src="https://user-images.githubusercontent.com/3698215/145100889-891c8a60-1e99-41c7-bfe6-a49f7b4a0b48.png">
 
 ##### End-user authentication/authorization with JWT
-To enable end-user request authentication please create RequestAuthentication with ```spec.jwtRules``` section decribing desired JWT rules. This will allow requests only with JWT issued by issuer testing@secure.istio.io (see ```/ServiceMesh/Session 4/k8s/gateway/security.yml:RequestAuthentication```). 
-After that it's required to create AuthorizationPolicy to deny requests to frontend service without request principals (see ```/ServiceMesh/Session 4/k8s/gateway/security.yml:AuthorizationPolicy```).
+To enable end-user request authentication please create RequestAuthentication with ```spec.jwtRules``` section decribing desired JWT rules. This will allow requests only with JWT issued by issuer testing@secure.istio.io (see ```/ServiceMesh/Session 5/k8s/gateway/security.yml:RequestAuthentication```). 
+After that it's required to create AuthorizationPolicy to deny requests to frontend service without request principals (see ```/ServiceMesh/Session 5/k8s/gateway/security.yml:AuthorizationPolicy```).
 
 For documentation on Auth0 please see: https://auth0.com/docs/security/tokens/json-web-tokens/json-web-key-sets
 <br/>
